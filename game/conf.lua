@@ -20,10 +20,10 @@ function love.conf(t)
 	t.audio.mic             = false
 	t.audio.mixwithsystem   = true
 
-	t.window.title          = "Untitled"
+	t.window.title          = "SunBrainz"
 	t.window.icon           = nil
-	t.window.width          = 800
-	t.window.height         = 600
+	t.window.width          = 1280
+	t.window.height         = 720
 	t.window.borderless     = false
 	t.window.resizable      = false
 	t.window.minwidth       = 1
