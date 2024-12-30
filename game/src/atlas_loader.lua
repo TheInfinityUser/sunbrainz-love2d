@@ -1,7 +1,7 @@
 require("src.util")
 
-function LoadAtlasRects(path, images)
-	local lines = GetTokens(love.filesystem.read(path .. "/atlas.txt"), "\n")
+function LoadAtlasRects(location, images)
+	local lines = GetTokens(love.filesystem.read("assets/atlas/" .. location .. ".atl"), "\n")
 	local rects = {}
 
 	for i = 2, #lines do
@@ -19,12 +19,12 @@ function LoadAtlasRects(path, images)
 	return rects
 end
 
-function LoadAtlasImages(path)
-	local n = tonumber(string.sub(love.filesystem.read(path .. "/atlas.txt"), 1, 1))
+function LoadAtlasImages(location)
+	local n = tonumber(string.sub(love.filesystem.read("assets/atlas/" .. location .. ".atl"), 1, 1))
 	local images = {}
 
 	for i = 1, n do
-		table.insert(images, love.graphics.newImage(path .. "/" .. i .. ".png"))
+		table.insert(images, love.graphics.newImage("assets/texture/" .. location .. "/" .. i .. ".png"))
 	end
 
 	return images

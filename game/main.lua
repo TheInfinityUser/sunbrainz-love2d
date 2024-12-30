@@ -1,8 +1,8 @@
 require("src.atlas_loader")
 
 function love.load()
-	Images = LoadAtlasImages("assets/plant/doomshroom")
-	Rects = LoadAtlasRects("assets/plant/doomshroom", Images)
+	Images = LoadAtlasImages("plant/doomshroom")
+	Rects = LoadAtlasRects("plant/doomshroom", Images)
 end
 
 function love.update(dt)
