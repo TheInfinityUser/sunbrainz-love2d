@@ -1,8 +1,10 @@
-require("src.atlas_loader")
+require("src.loader")
 
 function love.load()
-	Images = LoadAtlasImages("plant/doomshroom")
-	Rects = LoadAtlasRects("plant/doomshroom", Images)
+	require("src.atlas.plant.doomshroom")
+	require("src.image.plant.doomshroom")
+
+	print(tostring(LoadedRects.doomshroom))
 end
 
 function love.update(dt)
@@ -10,9 +12,9 @@ function love.update(dt)
 end
 
 function love.draw()
-	local i = 1
-	for key, rect in pairs(Rects) do
-		love.graphics.draw(Images[rect.atlas], rect.quad, 100 * i, 100)
-		i = i + 1
-	end
+	love.graphics.draw(
+		LoadedImages.doomshroom[LoadedRects.doomshroom.doomshroom_138x119.i],
+		LoadedRects.doomshroom.doomshroom_138x119.q,
+		100, 100
+	)
 end

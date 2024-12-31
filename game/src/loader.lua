@@ -1,0 +1,3 @@
+LoadedRects = {}
+LoadedImages = {}
+LoadedAnimations = {}
