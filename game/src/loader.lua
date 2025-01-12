@@ -1,3 +1,3 @@
-LoadedRects = {}
-LoadedImages = {}
-LoadedAnimations = {}
+AtlasTextures = {}
+Images = {}
+Animations = {}

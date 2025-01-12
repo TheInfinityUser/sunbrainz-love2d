@@ -1,5 +1,5 @@
 require("src.loader")
 
-LoadedAnimations.doomshroom = {}
+Animations.doomshroom = {}
 
-LoadedAnimations.doomshroom.size = { x = 390, y = 390 }
+Animations.doomshroom.size = { x = 390, y = 390 }

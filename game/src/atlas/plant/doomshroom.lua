@@ -1,6 +1,6 @@
 require("src.loader")
 
-LoadedRects.doomshroom = {
+AtlasTextures.doomshroom = {
 	doomshroom_100x69 = { i = 1, q = love.graphics.newQuad(2998, 3531, 128, 89, 4096, 4096) },
 	doomshroom_100x83 = { i = 1, q = love.graphics.newQuad(3452, 3626, 128, 106, 4096, 4096) },
 	doomshroom_103x46 = { i = 1, q = love.graphics.newQuad(1485, 3277, 132, 59, 4096, 4096) },

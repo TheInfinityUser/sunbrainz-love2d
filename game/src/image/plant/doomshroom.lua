@@ -1,6 +1,6 @@
 require("src.loader")
 
-LoadedImages.doomshroom = {
+Images.doomshroom = {
 	love.graphics.newImage("assets/plant/doomshroom/1.png"),
 	love.graphics.newImage("assets/plant/doomshroom/2.png")
 }
