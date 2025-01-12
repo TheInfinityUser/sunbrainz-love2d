@@ -1,57 +1,63 @@
 import json
+import math
 
-e_name = "doomshroom"
-path = "d:\MyFiles\PVZ\doomshroom.pam.json"
+e_name = "peashooter"
+path = "d:\MyFiles\PVZ\peashooter.pam.json"
 
 file = open(path)
 js = json.load(file)
 
 def transform_to_str(transform, line_start):
-	t = "love.math.newTransform()\n"
+	text = "love.math.newTransform():setMatrix(\n"
 	if len(transform) == 6:
-		if not (transform[1] == 0.0 and transform[2] == 0.0):
-			t += line_start + ":shear(" + str(transform[1]) + ", " + str(transform[2]) + ")\n"
-		if not (transform[0] == 1.0 and transform[3] == 1.0):
-			if transform[0] == transform[3]:
-				t += line_start + ":scale(" + str(transform[0]) + ")\n"
-			else:
-				t += line_start + ":scale(" + str(transform[0]) + ", " + str(transform[3]) + ")\n"
-		if not (transform[4] == 0.0 and transform[5] == 0.0):
-			t += line_start + ":translate(" + str(transform[4]) + ", " + str(transform[5]) + ")\n"
+		text += line_start + "\t" + str(transform[0]) + ", " + str(transform[2]) + ", 0.0, " + str(transform[4]) + ",\n"
+		text += line_start + "\t" + str(transform[1]) + ", " + str(transform[3]) + ", 0.0, " + str(transform[5]) + ",\n"
+		text += line_start + "\t0.0, 0.0, 1.0, 0.0,\n"
+		text += line_start + "\t0.0, 0.0, 0.0, 1.0\n"
 	if len(transform) == 2:
-		if not (transform[0] == 0.0 and transform[1] == 0.0):
-			t += line_start + ":translate(" + str(transform[0]) + ", " + str(transform[1]) + ")\n"
+		text += line_start + "\t1.0, 0.0, 0.0, " + str(transform[0]) + ",\n"
+		text += line_start + "\t0.0, 1.0, 0.0, " + str(transform[1]) + ",\n"
+		text += line_start + "\t0.0, 0.0, 1.0, 0.0,\n"
+		text += line_start + "\t0.0, 0.0, 0.0, 1.0\n"
 	if len(transform) == 3:
-		if not (transform[2] == 0.0):
-			t += line_start + ":rotate(" + str(transform[2]) + ")\n"
-		if not (transform[0] == 0.0 and transform[1] == 0.0):
-			t += line_start + ":translate(" + str(transform[0]) + ", " + str(transform[1]) + ")\n"
-	return t
+		text += line_start + "\t" + str(math.cos(transform[0])) + ", " + str(-math.sin(transform[0])) + ", 0.0, " + str(transform[1]) + ",\n"
+		text += line_start + "\t" + str(math.sin(transform[0])) + ", " + str(math.cos(transform[0])) + ", 0.0, " + str(transform[2]) + ",\n"
+		text += line_start + "\t0.0, 0.0, 1.0, 0.0,\n"
+		text += line_start + "\t0.0, 0.0, 0.0, 1.0\n"
+	text += line_start + ")\n"
+	return text
 
-def append_to_text(st):
-	global text
+def append_state_to_text(text, st):
 	text += "\t{\n"
 	for l in st:
-		if not st[l]:
+		if not ("base" in l or "part" in l):
 			continue
-		text += "\t\t[" + str(l) + "] = {\n"
-		if "base" in st[l]:
-			text += "\t\t\tbase = \"" + str(st[l]["base"]) + "\",\n"
-		if "part" in st[l]:
-			text += "\t\t\tpart = \"" + str(st[l]["part"]) + "\",\n"
-			text += "\t\t\tframe = " + str(st[l]["frame"]) + ",\n"
+		text += "\t\t{\n"
+		text += "\t\t\tlayer = " + str(l["layer"]) + ",\n"
+		if "base" in l:
+			text += "\t\t\tbase = \"" + str(l["base"]) + "\",\n"
+		elif "part" in l:
+			text += "\t\t\tpart = \"" + str(l["part"]) + "\",\n"
+			text += "\t\t\tframe = " + str(l["frame"]) + ",\n"
 		text += "\t\t\tcolor = { " + \
-			str(st[l]["color"][0]) + ", " + \
-			str(st[l]["color"][1]) + ", " + \
-			str(st[l]["color"][2]) + ", " + \
-			str(st[l]["color"][3]) + " },\n"
-		text += "\t\t\ttransform = " + transform_to_str(st[l]["transform"], "\t\t\t\t")
+			str(l["color"][0]) + ", " + \
+			str(l["color"][1]) + ", " + \
+			str(l["color"][2]) + ", " + \
+			str(l["color"][3]) + " },\n"
+		text += "\t\t\ttransform = " + transform_to_str(l["transform"], "\t\t\t")
 		text += "\t\t},\n"
 	text = text[:-2] + "\n\t},\n"
+	return text
 
-for sprite in js["sprite"]:
+def state_dict_to_sorted_list(state):
+	_state = []
+	for item in sorted(state.items()):
+		_state.append(item[1])
+		_state[len(_state) - 1]["layer"] = item[0]
+	return _state
 
-	text = "require(\"src.loader\")\n\nAnimations." + e_name + ".part." + sprite["name"].replace(" ", "_") + " = {\n"
+def convert_sprite(sprite):
+	text = "Animations." + e_name + ".part." + sprite["name"].replace(" ", "_") + " = {\n"
 
 	state = {}
 
@@ -64,7 +70,7 @@ for sprite in js["sprite"]:
 		for layer in frame["append"]:
 			if layer["sprite"]:
 				state[layer["index"] + 1]["part"] = js["sprite"][layer["resource"]]["name"]
-				state[layer["index"] + 1]["frame"] = 0
+				state[layer["index"] + 1]["frame"] = 1
 				state[layer["index"] + 1]["// length"] = len(js["sprite"][layer["resource"]]["frame"])
 			else:
 				state[layer["index"] + 1]["base"] = js["image"][layer["resource"]]["path"]
@@ -75,13 +81,20 @@ for sprite in js["sprite"]:
 				state[layer["index"] + 1]["color"] = layer["color"]
 		for layer in frame["remove"]:
 			del state[layer + 1]
-		append_to_text(state)
+		text = append_state_to_text(text, state_dict_to_sorted_list(state))
 		for l in state:
 			if "frame" in state[l]:
-				state[l]["frame"] = (state[l]["frame"] + 1) % state[l]["// length"]
+				state[l]["frame"] = state[l]["frame"] % state[l]["// length"] + 1
 
 	text = text[:-2] + "\n}"
 
 	output = open("conversion\\outputs\\" + sprite["name"].replace(" ", "_") + ".lua", "w")
 	output.write(text)
 	output.close()
+
+	print("require(\"src.animation.plant." + e_name + ".parts." + sprite["name"].replace(" ", "_") + "\")")
+
+for sprite in js["sprite"]:
+	convert_sprite(sprite)
+
+#convert_sprite(js["main_sprite"])
