@@ -1,5 +1,5 @@
 Animations.cold_snapdragon = {}
-Animations.cold_snapdragon.size = { x = 390.0, y = 390.0}
+Animations.cold_snapdragon.size = { x = 390.0, y = 390.0 }
 Animations.cold_snapdragon.scaleFactor = 0.78125
 Animations.cold_snapdragon.base = {
 	cold_snapdragon_23x24 = {
