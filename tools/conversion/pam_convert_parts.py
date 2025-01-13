@@ -1,8 +1,8 @@
 import json
 import math
 
-e_name = "peashooter"
-path = "d:\MyFiles\PVZ\peashooter.pam.json"
+e_name = "cold_snapdragon"
+path = "d:\MyFiles\PVZ\cold_snapdragon.pam.json"
 
 file = open(path)
 js = json.load(file)
@@ -28,10 +28,11 @@ def transform_to_str(transform, line_start):
 	return text
 
 def append_state_to_text(text, st):
+	if len(st) == 0:
+		text += "\t{},\n"
+		return text
 	text += "\t{\n"
 	for l in st:
-		if not ("base" in l or "part" in l):
-			continue
 		text += "\t\t{\n"
 		text += "\t\t\tlayer = " + str(l["layer"]) + ",\n"
 		if "base" in l:
@@ -52,21 +53,25 @@ def append_state_to_text(text, st):
 def state_dict_to_sorted_list(state):
 	_state = []
 	for item in sorted(state.items()):
+		if not ("base" in item[1] or "part" in item[1]):
+			continue
 		_state.append(item[1])
-		_state[len(_state) - 1]["layer"] = item[0]
+		_state[-1]["layer"] = item[0]
 	return _state
 
-def convert_sprite(sprite):
-	text = "Animations." + e_name + ".part." + sprite["name"].replace(" ", "_") + " = {\n"
+def convert_sprite(sprite, section, name, _type):
+	text = "Animations." + e_name + "." + _type + "[\"" + name + "\"] = {\n"
 
 	state = {}
-
-	for frame in sprite["frame"]:
+	
+	for f in range(0, section[1]):
+		frame = sprite["frame"][f]
 		for layer in frame["append"]:
 			if layer["index"] + 1 not in state:
 				state[layer["index"] + 1] = {}
 
-	for frame in sprite["frame"]:
+	for f in range(0, section[1]):
+		frame = sprite["frame"][f]
 		for layer in frame["append"]:
 			if layer["sprite"]:
 				state[layer["index"] + 1]["part"] = js["sprite"][layer["resource"]]["name"]
@@ -80,21 +85,41 @@ def convert_sprite(sprite):
 			if layer["color"]:
 				state[layer["index"] + 1]["color"] = layer["color"]
 		for layer in frame["remove"]:
-			del state[layer + 1]
-		text = append_state_to_text(text, state_dict_to_sorted_list(state))
+			state[layer + 1] = {}
+		if f >= section[0]:
+			text = append_state_to_text(text, state_dict_to_sorted_list(state))
 		for l in state:
 			if "frame" in state[l]:
 				state[l]["frame"] = state[l]["frame"] % state[l]["// length"] + 1
 
 	text = text[:-2] + "\n}"
 
-	output = open("conversion\\outputs\\" + sprite["name"].replace(" ", "_") + ".lua", "w")
+	output = open("conversion\\outputs\\" + name + ".lua", "w")
 	output.write(text)
 	output.close()
 
-	print("require(\"src.animation.plant." + e_name + ".parts." + sprite["name"].replace(" ", "_") + "\")")
+	print("require(\"src.animations.plant." + e_name + "." + _type + "s." + name + "\")")
 
 for sprite in js["sprite"]:
-	convert_sprite(sprite)
+	convert_sprite(
+		sprite,
+		[sprite["work_area"]["start"], sprite["work_area"]["start"] + sprite["work_area"]["duration"]],
+		sprite["name"],
+		"part"
+	)
 
-#convert_sprite(js["main_sprite"])
+animations = []
+for f in range(js["main_sprite"]["work_area"]["start"], js["main_sprite"]["work_area"]["start"] + js["main_sprite"]["work_area"]["duration"]):
+	if js["main_sprite"]["frame"][f]["label"] != "":
+		animations.append({ "name": js["main_sprite"]["frame"][f]["label"] })
+		animations[-1]["start"] = f
+	if js["main_sprite"]["frame"][f]["stop"]:
+		animations[-1]["end"] = f + 1
+
+for anim in animations:
+	convert_sprite(
+		js["main_sprite"],
+		[anim["start"], anim["end"]],
+		anim["name"],
+		"animation"
+	)

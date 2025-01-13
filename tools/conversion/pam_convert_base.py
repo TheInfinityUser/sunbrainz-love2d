@@ -1,9 +1,7 @@
 import json
 
-print("Entity Name: ", end="")
-e_name = input()
-print("File: ", end="")
-path = input()
+e_name = "cold_snapdragon"
+path = "d:\MyFiles\PVZ\cold_snapdragon.pam.json"
 
 file = open(path)
 js = json.load(file)
@@ -19,7 +17,9 @@ for img in js["image"]:
 	text += "\t\t\t0.0, 0.0, 1.0, 0.0,\n"
 	text += "\t\t\t0.0, 0.0, 0.0, 1.0\n\t\t)\n"
 	text += "\t},\n"
-text = text[:-2] + "\n}"
+text = text[:-2] + "\n}\n"
+text += "Animations." + e_name + ".part = {}\n"
+text += "Animations." + e_name + ".animation = {}"
 
 file.close()
 

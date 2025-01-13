@@ -8,7 +8,15 @@ path = input()
 file = open(path)
 json = json.load(file)
 
-text = "require(\"src.loader\")\n\nAtlasTextures." + e_name + " = {\n"
+text = "require(\"src.loader\")\n\n"
+text += "Atlas." + e_name + " = {\n"
+text += "\timages = {\n"
+i = 1
+for atl_key in json["packet"]:
+	text += "\t\tlove.graphics.newImage(\"assets/plant/" + e_name + "/" + str(i) + ".png\"),\n"
+	i += 1
+text = text[:-2] + "\n\t},\n"
+text += "\tquads = {\n"
 for atl_key in json["packet"]:
 	sx = str(json["packet"][atl_key]["dimension"]["width"])
 	sy = str(json["packet"][atl_key]["dimension"]["height"])
@@ -21,9 +29,9 @@ for atl_key in json["packet"]:
 		w = str(json["packet"][atl_key]["data"][data_key]["default"]["aw"])
 		h = str(json["packet"][atl_key]["data"][data_key]["default"]["ah"])
 
-		text += "\t" + name + " = { i = " + index + ", q = love.graphics.newQuad(" + x + ", " + y  + ", " + w + ", " + h + ", " + sx + ", " + sy + ") },\n"
+		text += "\t\t" + name + " = { image = " + index + ", quad = love.graphics.newQuad(" + x + ", " + y  + ", " + w + ", " + h + ", " + sx + ", " + sy + ") },\n"
 
-text = text[:-2] + "\n}"
+text = text[:-2] + "\n\t}\n}"
 
 file.close()
 
