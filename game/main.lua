@@ -1,11 +1,9 @@
 require("src.atlases.plant.cold_snapdragon")
 require("src.animations.plant.cold_snapdragon")
 
-local time
 local frame
 local atlas
 local anim
-local fps
 
 local animLayerSetter = {
 	color = { 1.0, 1.0, 1.0, 1.0 },
@@ -27,7 +25,6 @@ local animLayerSetter = {
 }
 
 function love.load()
-	time = 0
 	frame = 1
 
 	atlas = Atlas.cold_snapdragon
@@ -129,12 +126,7 @@ end
 
 local updateFps = 0
 function love.update(dt)
-	frame = math.floor(30 * time) % #anim.animation["idle"] + 1
-	if updateFps == 0 then
-		fps = math.floor(1.0 / dt)
-	end
-	updateFps = (updateFps + 1) % 20
-	time = time + dt
+	frame = math.floor(30 * love.timer.getTime()) % #anim.animation["idle"] + 1
 end
 
 function love.keypressed(key)
@@ -148,9 +140,8 @@ end
 
 function love.draw()
 	love.graphics.setColor(1.0, 1.0, 1.0, 1.0)
-	love.graphics.print(fps)
-	for i = 0, 9999 do
-		love.graphics.translate(1, 0.5)
+	love.graphics.print(love.timer.getFPS())
+	for i = 1, 1000 do
 		drawAnimation("idle", frame, { 1.0, 1.0, 1.0, 1.0 },
 			love.math.newTransform(), animLayerSetter)
 	end
