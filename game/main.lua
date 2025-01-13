@@ -150,7 +150,7 @@ function love.draw()
 	love.graphics.setColor(1.0, 1.0, 1.0, 1.0)
 	love.graphics.print(fps)
 	for i = 0, 9999 do
-		love.graphics.translate(1, 1)
+		love.graphics.translate(1, 0.5)
 		drawAnimation("idle", frame, { 1.0, 1.0, 1.0, 1.0 },
 			love.math.newTransform(), animLayerSetter)
 	end
