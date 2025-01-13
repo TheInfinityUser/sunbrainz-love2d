@@ -15,7 +15,11 @@ function love.load()
 end
 
 local function drawPart(partName, frameIndex, color, transform)
+	local tf
 	for i, layer in ipairs(anim.part[partName][frameIndex]) do
+		tf = love.math.newTransform()
+		tf:apply(transform)
+		tf:apply(layer.transform)
 		if layer.part then
 			drawPart(
 				layer.part,
@@ -26,10 +30,11 @@ local function drawPart(partName, frameIndex, color, transform)
 					color[3] * layer.color[3],
 					color[4] * layer.color[4],
 				},
-				transform
-				* layer.transform
+				tf
 			)
 		else
+			tf:apply(anim.base[layer.base].transform)
+			tf:scale(anim.scaleFactor)
 			love.graphics.setColor({
 				color[1] * layer.color[1],
 				color[2] * layer.color[2],
@@ -39,10 +44,7 @@ local function drawPart(partName, frameIndex, color, transform)
 			love.graphics.draw(
 				atlas.images[atlas.quads[layer.base].image],
 				atlas.quads[layer.base].quad,
-				transform
-				* layer.transform
-				* anim.base[layer.base].transform
-				* love.math.newTransform():scale(anim.scaleFactor)
+				tf
 			)
 		end
 	end
