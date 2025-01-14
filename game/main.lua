@@ -141,8 +141,5 @@ end
 function love.draw()
 	love.graphics.setColor(1.0, 1.0, 1.0, 1.0)
 	love.graphics.print(love.timer.getFPS())
-	for i = 1, 1000 do
-		drawAnimation("idle", frame, { 1.0, 1.0, 1.0, 1.0 },
-			love.math.newTransform(), animLayerSetter)
-	end
+	drawAnimation("idle", frame, { 1.0, 1.0, 1.0, 1.0 }, love.math.newTransform(), animLayerSetter)
 end
